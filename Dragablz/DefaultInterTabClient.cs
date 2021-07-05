@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using Dragablz.Core;
 
@@ -14,7 +15,7 @@ namespace Dragablz
             var sourceWindow = Window.GetWindow(source);
             if (sourceWindow == null) throw new ApplicationException("Unable to ascertain source window.");
             var newWindow = (Window)Activator.CreateInstance(sourceWindow.GetType());
-
+            
             newWindow.Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.DataBind);
 
             var newTabablzControl = newWindow.LogicalTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
@@ -23,6 +24,10 @@ namespace Dragablz
             if (newTabablzControl.ItemsSource == null)
                 newTabablzControl.Items.Clear();
 
+            newTabablzControl.InterTabController.Partition = (partition as string);
+            newWindow.Content = new UserControl() { Content = newTabablzControl};
+            var tabWindowStyle = Application.Current.FindResource("TabWindow") as Style;
+            newWindow.Style = tabWindowStyle;
             return new NewTabHost<Window>(newWindow, newTabablzControl);            
         }
 
