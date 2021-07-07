@@ -161,6 +161,7 @@ namespace Dragablz
             existingLocation.tabControl.SelectedItem = item;
         }
 
+
         /// <summary>
         /// Style to apply to header items which are not their own item container (<see cref="TabItem"/>).  Typically items bound via the <see cref="ItemsSource"/> will use this style.
         /// </summary>
@@ -199,6 +200,20 @@ namespace Dragablz
             dependencyObject.SetValue(HeaderItemsOrganiserProperty, new HorizontalOrganiser((double)dependencyPropertyChangedEventArgs.NewValue));
         }
 
+
+
+        public double HeaderHeight
+        {
+            get { return (double)GetValue(HeaderHeightProperty); }
+            set { SetValue(HeaderHeightProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HeaderHeight.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HeaderHeightProperty =
+            DependencyProperty.Register("HeaderHeight", typeof(double), typeof(TabablzControl), new PropertyMetadata(0.0));
+
+
+
         public double AdjacentHeaderItemOffset
         {
             get { return (double)GetValue(AdjacentHeaderItemOffsetProperty); }
@@ -213,6 +228,20 @@ namespace Dragablz
             get { return (IItemsOrganiser)GetValue(HeaderItemsOrganiserProperty); }
             set { SetValue(HeaderItemsOrganiserProperty, value); }
         }
+
+
+
+        public bool IsHeaderOverTab
+        {
+            get { return (bool)GetValue(IsHeaderOverTabProperty); }
+            set { SetValue(IsHeaderOverTabProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsHeaderOverTab.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsHeaderOverTabProperty =
+            DependencyProperty.Register("IsHeaderOverTab", typeof(bool), typeof(TabablzControl), new PropertyMetadata(false));
+
+
 
         public static readonly DependencyProperty HeaderMemberPathProperty = DependencyProperty.Register(
             "HeaderMemberPath", typeof(string), typeof(TabablzControl), new PropertyMetadata(default(string)));
@@ -924,6 +953,7 @@ namespace Dragablz
                             other.InterTabController.Partition == InterTabController.Partition);
             if (target == null) return;
 
+            target.IsHeaderOverTab = IsHeaderOverTab;
             foreach (var item in orphanedItems)
             {
                 if (!Layout.OnLoadBranch(this, item))
