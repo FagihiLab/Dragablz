@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -595,127 +596,19 @@ namespace Dragablz.Dockablz
         /// </summary>
         /// <param name="tabablzControl">Tabs Owner</param>
         /// <param name="dragablzItems">List of tabs</param>
-        public static void OnLoadBranch(TabablzControl tabablzControl, IEnumerable<DragablzItem> dragablzItems)
+        public static async void OnLoadBranch(TabablzControl tabablzControl, IEnumerable<DragablzItem> dragablzItems)
         {
             if (layout is null)
                 layout = (tabablzControl.Parent as Layout);
             if (layout is null)
                 return;
 
-                OnLoadBranch(tabablzControl, dragablzItems.First(), true);
+            await OnLoadBranch(tabablzControl, dragablzItems.First(), true);
 
             foreach (var sourceDragablzItem in dragablzItems.Skip(1))
             {
-                OnLoadBranch(tabablzControl, sourceDragablzItem);
+                await OnLoadBranch(tabablzControl, sourceDragablzItem);
             }
-            //foreach (var sourceDragablzItem in dragablzItems)
-            //{
-
-                //    var location = DropZoneLocation.Left;
-
-                //    if (sourceDragablzItem.Content is DragableTabItem dragableTabItem)
-                //        location = dragableTabItem.Location;
-
-                //    if (location == DropZoneLocation.Left)
-                //    {
-                //        var sourceOfDragItemsControl0 = ItemsControl.ItemsControlFromItemContainer(sourceDragablzItem) as DragablzItemsControl;
-                //        if (sourceOfDragItemsControl0 == null) throw new ApplicationException("Unable to determin source items control.");
-
-                //        var sourceTabControl0 = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl0);
-                //        if (sourceTabControl0 == null) throw new ApplicationException("Unable to determin source tab control.");
-
-                //        if (sourceTabControl0.IsHeaderOverTab)
-                //        {
-                //            sourceTabControl0.IsHeaderOverTab = true;
-                //            sourceTabControl0.Style = TabablzStyle;
-                //        }
-
-                //        continue;
-                //    }
-
-                //    if (layout is null)
-                //        layout = (tabablzControl.Parent as Layout);
-
-
-
-                //    var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(sourceDragablzItem) as DragablzItemsControl;
-                //    if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determin source items control.");
-
-                //    var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
-                //    if (sourceTabControl == null) throw new ApplicationException("Unable to determin source tab control.");
-
-
-                //    var floatingItemSnapShots = sourceTabControl.VisualTreeDepthFirstTraversal()
-                //            .OfType<Layout>()
-                //            .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
-                //            .ToList();
-
-                //    var sourceItem = sourceOfDragItemsControl.ItemContainerGenerator.ItemFromContainer(sourceDragablzItem);
-                //    sourceTabControl.RemoveItem(sourceDragablzItem);
-
-                //    var branchItem = new Branch
-                //    {
-                //        Orientation = (location == DropZoneLocation.Right || location == DropZoneLocation.Left) ? Orientation.Horizontal : Orientation.Vertical
-                //    };
-
-                //    object newContent;
-                //    if (layout.BranchTemplate == null)
-                //    {
-                //        var newTabHost = layout.InterLayoutClient.GetNewHost(layout.Partition, sourceTabControl);
-                //        if (newTabHost == null)
-                //            throw new ApplicationException("InterLayoutClient did not provide a new tab host.");
-                //        newTabHost.TabablzControl.AddToSource(sourceItem);
-                //        newTabHost.TabablzControl.SelectedItem = sourceItem;
-                //        newContent = newTabHost.Container;
-                //        if (sourceTabControl.IsHeaderOverTab)
-                //        {
-                //            newTabHost.TabablzControl.IsHeaderOverTab = true;
-                //            newTabHost.TabablzControl.Style = TabablzStyle;
-                //        }
-
-
-                //        layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabHost.TabablzControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
-                //    }
-                //    else
-                //    {
-                //        newContent = new ContentControl
-                //        {
-                //            Content = new object(),
-                //            ContentTemplate = layout.BranchTemplate,
-                //        };
-                //        ((ContentControl)newContent).Dispatcher.BeginInvoke(new Action(() =>
-                //        {
-                //            //TODO might need to improve this a bit, make it a bit more declarative for complex trees
-                //            var newTabControl = ((ContentControl)newContent).VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
-                //            if (newTabControl == null) return;
-
-                //            newTabControl.DataContext = sourceTabControl.DataContext;
-                //            newTabControl.AddToSource(sourceItem);
-                //            newTabControl.SelectedItem = sourceItem;
-                //            if (sourceTabControl.IsHeaderOverTab)
-                //            {
-                //                newTabControl.IsHeaderOverTab = true;
-                //                newTabControl.Style = TabablzStyle;
-                //            }
-                //            layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
-                //        }), DispatcherPriority.Loaded);
-                //    }
-                //    if (location == DropZoneLocation.Right || location == DropZoneLocation.Bottom)
-                //    {
-                //        branchItem.FirstItem = layout.Content;
-                //        branchItem.SecondItem = newContent;
-                //    }
-                //    else
-                //    {
-                //        branchItem.FirstItem = newContent;
-                //        branchItem.SecondItem = layout.Content;
-                //    }
-
-
-                //    layout.SetCurrentValue(ContentProperty, branchItem);
-
-                //    layout.Dispatcher.BeginInvoke(new Action(() => MarkTopLeftItem(layout)), DispatcherPriority.Loaded);
-                //}
         }
         /// <summary>
         /// This method has been made  to get the ability of preset tabs location
@@ -723,7 +616,7 @@ namespace Dragablz.Dockablz
         /// <param name="tabablzControl">Tabs Owner</param>
         /// <param name="sourceDragablzItem">tab Item</param>
         /// <returns></returns>
-        public static bool OnLoadBranch(TabablzControl tabablzControl, DragablzItem sourceDragablzItem, bool isFirst = false)
+        public static async Task<bool> OnLoadBranch(TabablzControl tabablzControl, DragablzItem sourceDragablzItem, bool isFirst = false)
         {
             if (layout is null)
                 layout = (tabablzControl.Parent as Layout);
@@ -766,13 +659,13 @@ namespace Dragablz.Dockablz
                 newTabHost.TabablzControl.AddToSource(sourceItem);
                 newTabHost.TabablzControl.SelectedItem = sourceItem;
                 newContent = newTabHost.Container;
-                if (tabablzControl.IsHeaderOverTab)
+                if (sourceTabControl.IsHeaderOverTab)
                 {
                     newTabHost.TabablzControl.IsHeaderOverTab = true;
                     newTabHost.TabablzControl.Style = TabablzStyle;
                 }
 
-                layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabHost.TabablzControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
+                await layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabHost.TabablzControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
             }
             else
             {
@@ -781,23 +674,23 @@ namespace Dragablz.Dockablz
                     Content = new object(),
                     ContentTemplate = layout.BranchTemplate,
                 };
-                ((ContentControl)newContent).Dispatcher.BeginInvoke(new Action(() =>
-                {
+                await ((ContentControl)newContent).Dispatcher.BeginInvoke(new Action(() =>
+               {
                     //TODO might need to improve this a bit, make it a bit more declarative for complex trees
                     var newTabControl = ((ContentControl)newContent).VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
-                    if (newTabControl == null) return;
+                   if (newTabControl == null) return;
 
-                    newTabControl.DataContext = sourceTabControl.DataContext;
-                    newTabControl.AddToSource(sourceItem);
-                    newTabControl.SelectedItem = sourceItem;
-                    if (tabablzControl.IsHeaderOverTab)
-                    {
-                        newTabControl.IsHeaderOverTab = true;
-                        newTabControl.Style = TabablzStyle;
-                    }
+                   newTabControl.DataContext = sourceTabControl.DataContext;
+                   newTabControl.AddToSource(sourceItem);
+                   newTabControl.SelectedItem = sourceItem;
+                   if (sourceTabControl.IsHeaderOverTab)
+                   {
+                       newTabControl.IsHeaderOverTab = true;
+                       newTabControl.Style = TabablzStyle;
+                   }
 
-                    layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
-                }), DispatcherPriority.Loaded);
+                   layout.Dispatcher.BeginInvoke(new Action(() => RestoreFloatingItemSnapShots(newTabControl, floatingItemSnapShots)), DispatcherPriority.Loaded);
+               }), DispatcherPriority.Loaded);
             }
             if ((layout.Content as TabablzControl)?.Items.Count == 0 || isFirst)
             {
@@ -817,7 +710,7 @@ namespace Dragablz.Dockablz
 
             layout.SetCurrentValue(ContentProperty, branchItem);
 
-            layout.Dispatcher.BeginInvoke(new Action(() => MarkTopLeftItem(layout)), DispatcherPriority.Loaded);
+            await layout.Dispatcher.BeginInvoke(new Action(() => MarkTopLeftItem(layout)), DispatcherPriority.Loaded);
             return true;
         }
 
@@ -1187,7 +1080,7 @@ namespace Dragablz.Dockablz
             canExecuteRoutedEventArgs.Handled = true;
         }
 
-        private void UnfloatExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
+        private async void UnfloatExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
             var dragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
             if (dragablzItem == null) return;
@@ -1198,7 +1091,7 @@ namespace Dragablz.Dockablz
             if (exemplarTabControl == null) return;
 
             //TODO passing the exemplar tab in here isnt ideal, as strictly speaking there isnt one.
-            var newTabHost = exemplarTabControl.InterTabController.InterTabClient.GetNewHost(exemplarTabControl.InterTabController.InterTabClient,
+            var newTabHost = await exemplarTabControl.InterTabController.InterTabClient.GetNewHost(exemplarTabControl.InterTabController.InterTabClient,
                 exemplarTabControl.InterTabController.Partition, exemplarTabControl);
             if (newTabHost == null || newTabHost.TabablzControl == null || newTabHost.Container == null)
                 throw new ApplicationException("New tab host was not correctly provided");
@@ -1225,7 +1118,7 @@ namespace Dragablz.Dockablz
             newTabHost.Container.Left = myWindow.Left + 20;
             newTabHost.Container.Top = myWindow.Top + 20;
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            await Dispatcher.BeginInvoke(new Action(() =>
             {
                 newTabHost.TabablzControl.AddToSource(content);
                 newTabHost.TabablzControl.SelectedItem = content;

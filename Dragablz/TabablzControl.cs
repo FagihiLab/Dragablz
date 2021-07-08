@@ -924,7 +924,7 @@ namespace Dragablz
         }
 
         public bool isClosing = false;
-        private void WindowOnClosing(object sender, CancelEventArgs cancelEventArgs)
+        private async void WindowOnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             isClosing = true;
             _windowSubscription.Disposable = Disposable.Empty;
@@ -956,7 +956,7 @@ namespace Dragablz
             target.IsHeaderOverTab = IsHeaderOverTab;
             foreach (var item in orphanedItems)
             {
-                if (!Layout.OnLoadBranch(this, item))
+                if (!await Layout.OnLoadBranch(this, item))
                 {
                     var itemContent = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(item);
                     RemoveFromSource(itemContent);
@@ -1221,7 +1221,7 @@ namespace Dragablz
             return _dragablzItemsControl != null && _dragablzItemsControl.DragablzItems().Contains(item);
         }
 
-        private void MonitorBreach(DragablzDragDeltaEventArgs e)
+        private async void MonitorBreach(DragablzDragDeltaEventArgs e)
         {
             var mousePositionOnHeaderItemsControl = Mouse.GetPosition(_dragablzItemsControl);
 
@@ -1235,7 +1235,7 @@ namespace Dragablz
 
             if (!breachOrientation.HasValue) return;
 
-            var newTabHost = InterTabController.InterTabClient.GetNewHost(InterTabController.InterTabClient,
+            var newTabHost = await InterTabController.InterTabClient.GetNewHost(InterTabController.InterTabClient,
                 InterTabController.Partition, this);
             if (newTabHost?.TabablzControl == null || newTabHost.Container == null)
                 throw new ApplicationException("New tab host was not correctly provided");
