@@ -30,11 +30,6 @@ namespace Dragablz.Dockablz
             get { return _layout; }
         }
 
-        public IEnumerable<DragablzItem> FloatingItems
-        {
-            get { return _layout.FloatingDragablzItems(); }
-        }
-
         /// <summary>
         /// <see cref="BranchAccessor"/> and <see cref="TabablzControl"/> are mutually exclusive, according to whether the layout has been split, or just contains a tab control.
         /// </summary>

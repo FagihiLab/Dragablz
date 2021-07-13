@@ -478,14 +478,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="HideDisabledButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="Visibility" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(dockablz:Layout.IsFloatingInLayout), Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Style.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Visibility" Value="Collapsed" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
 
     <ControlTemplate x:Key="WindowTemplateKey" TargetType="{x:Type local:DragablzWindow}">
         <Border
@@ -667,13 +659,6 @@
                                 </PathGeometry>
                             </Path.Data>
                         </Path>
-                        <Ellipse
-                            Width="60"
-                            Height="60"
-                            Fill="{TemplateBinding Foreground}"
-                            Visibility="{TemplateBinding Location,
-                                                         Converter={StaticResource EqualityToVisibilityConverter},
-                                                         ConverterParameter={x:Static dockablz:DropZoneLocation.Floating}}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -956,52 +941,7 @@
                                             VerticalContentAlignment="Stretch"
                                             Style="{StaticResource InvisibleThumbStyle}" />
                                         <DockPanel Margin="{TemplateBinding Control.Padding}">
-                                            <Button
-                                                Margin="1,0,0,0"
-                                                Command="{x:Static dockablz:Layout.CloseFloatingItem}"
-                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource HideDisabledButtonStyle}">
-                                                <themes:SystemCommandIcon
-                                                    Width="10"
-                                                    Height="10"
-                                                    SystemCommandType="CloseWindow" />
-                                            </Button>
-                                            <Button
-                                                Margin="1,0,0,0"
-                                                Command="{x:Static dockablz:Layout.UnfloatItemCommand}"
-                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource HideDisabledButtonStyle}">
-                                                <Path
-                                                    Width="12"
-                                                    Height="12"
-                                                    Data="M 19 19 H 5 V 5 h 7 V 3 H 5 C 3.89 3 3 3.9 3 5 v 14 c 0 1.1 0.89 2 2 2 h 14 c 1.1 0 2 -0.9 2 -2 v -7 h -2 v 7 z M 14 3 v 2 h 3.59 L 7.76 14.83 9.17 16.24 19 6.41 V 10 h 2 V 3 h -7 z"
-                                                    Fill="#000000"
-                                                    Stretch="UniformToFill" />
-                                            </Button>
-                                            <Button
-                                                Margin="1,0,0,0"
-                                                Command="{x:Static dockablz:Layout.MaximiseFloatingItem}"
-                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource HideDisabledButtonStyle}">
-                                                <themes:SystemCommandIcon
-                                                    Width="10"
-                                                    Height="10"
-                                                    SystemCommandType="MaximizeWindow" />
-                                            </Button>
-                                            <Button
-                                                Margin="1,0,0,0"
-                                                Command="{x:Static dockablz:Layout.RestoreFloatingItem}"
-                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource HideDisabledButtonStyle}">
-                                                <themes:SystemCommandIcon
-                                                    Width="10"
-                                                    Height="10"
-                                                    SystemCommandType="RestoreWindow" />
-                                            </Button>
+
                                             <ContentPresenter
                                                 HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
                                                 Content="{TemplateBinding HeaderContent}"
@@ -1028,7 +968,6 @@
                                 VerticalAlignment="Stretch"
                                 local:DragablzItem.SizeGrip="Left"
                                 Cursor="SizeWE"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Top}"
@@ -1036,7 +975,6 @@
                                 VerticalAlignment="Top"
                                 local:DragablzItem.SizeGrip="Top"
                                 Cursor="SizeNS"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
@@ -1044,7 +982,6 @@
                                 VerticalAlignment="Stretch"
                                 local:DragablzItem.SizeGrip="Right"
                                 Cursor="SizeWE"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
@@ -1052,7 +989,6 @@
                                 VerticalAlignment="Bottom"
                                 local:DragablzItem.SizeGrip="Bottom"
                                 Cursor="SizeNS"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
@@ -1061,7 +997,6 @@
                                 VerticalAlignment="Top"
                                 local:DragablzItem.SizeGrip="TopLeft"
                                 Cursor="SizeNWSE"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
@@ -1070,7 +1005,6 @@
                                 VerticalAlignment="Top"
                                 local:DragablzItem.SizeGrip="TopRight"
                                 Cursor="SizeNESW"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
@@ -1079,7 +1013,6 @@
                                 VerticalAlignment="Bottom"
                                 local:DragablzItem.SizeGrip="BottomRight"
                                 Cursor="SizeNWSE"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                             <Thumb
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
@@ -1088,22 +1021,12 @@
                                 VerticalAlignment="Bottom"
                                 local:DragablzItem.SizeGrip="BottomLeft"
                                 Cursor="SizeNESW"
-                                IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                 Style="{StaticResource InvisibleThumbStyle}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style.Setters>
-        <Style.Triggers>
-            <Trigger Property="dockablz:Layout.FloatingItemState" Value="Maximized">
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Canvas.Left" Value="0" />
-                <Setter Property="Canvas.Top" Value="0" />
-                <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualWidth}" />
-                <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualHeight}" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="SizableFromBottomRightDragablzItemStyle" TargetType="{x:Type local:DragablzItem}">
@@ -1146,114 +1069,6 @@
         </Style.Setters>
     </Style>
 
-    <Style x:Key="FloatingDragablzItemStyle" TargetType="{x:Type local:DragablzItem}">
-        <Style.Setters>
-            <Setter Property="BorderBrush" Value="{StaticResource TabItem.Static.Border}" />
-            <Setter Property="BorderThickness" Value="4" />
-            <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}}" />
-            <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:DragablzItem}">
-                        <Grid Margin="{TemplateBinding Margin}">
-                            <Border Background="White">
-                                <Border.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="10"
-                                        Direction="315"
-                                        Opacity=".5"
-                                        ShadowDepth="5"
-                                        Color="Black" />
-                                </Border.Effect>
-                            </Border>
-                            <Border
-                                Padding="{TemplateBinding Control.Padding}"
-                                Background="{TemplateBinding Panel.Background}"
-                                BorderBrush="{TemplateBinding Border.BorderBrush}"
-                                BorderThickness="{TemplateBinding Border.BorderThickness}"
-                                SnapsToDevicePixels="True">
-                                <Grid Cursor="ScrollAll">
-                                    <ContentPresenter
-                                        Margin="{TemplateBinding Control.Padding}"
-                                        HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
-                                        Content="{TemplateBinding ContentControl.Content}"
-                                        ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
-                                        ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
-                                        SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-                                    <Thumb
-                                        x:Name="PART_Thumb"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        Style="{StaticResource InvisibleThumbStyle}" />
-                                </Grid>
-                            </Border>
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Left}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Stretch"
-                                local:DragablzItem.SizeGrip="Left"
-                                Cursor="SizeWE"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Top}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                local:DragablzItem.SizeGrip="Top"
-                                Cursor="SizeNS"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                local:DragablzItem.SizeGrip="Right"
-                                Cursor="SizeWE"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Bottom"
-                                local:DragablzItem.SizeGrip="Bottom"
-                                Cursor="SizeNS"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                local:DragablzItem.SizeGrip="TopLeft"
-                                Cursor="SizeNWSE"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                local:DragablzItem.SizeGrip="TopRight"
-                                Cursor="SizeNESW"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                local:DragablzItem.SizeGrip="BottomRight"
-                                Cursor="SizeNWSE"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                            <Thumb
-                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Bottom"
-                                local:DragablzItem.SizeGrip="BottomLeft"
-                                Cursor="SizeNESW"
-                                Style="{StaticResource InvisibleThumbStyle}" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style.Setters>
-    </Style>
 
     <Style x:Key="StandardEmbeddedButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
@@ -2388,51 +2203,8 @@
         </Setter>
     </Style>
 
-    <Style x:Key="FloatingDragablzItemsControlStyle" TargetType="{x:Type local:DragablzItemsControl}">
-        <Setter Property="Background" Value="{x:Null}" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="ItemsOrganiser">
-            <Setter.Value>
-                <local:CanvasOrganiser />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <Canvas ClipToBounds="True" IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:DragablzItemsControl}">
-                    <Border
-                        Padding="{TemplateBinding Control.Padding}"
-                        Background="{TemplateBinding Panel.Background}"
-                        BorderBrush="{TemplateBinding Border.BorderBrush}"
-                        BorderThickness="{TemplateBinding Border.BorderThickness}"
-                        SnapsToDevicePixels="True">
-                        <ItemsPresenter
-                            Width="{TemplateBinding ItemsPresenterWidth}"
-                            Height="{TemplateBinding ItemsPresenterHeight}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style TargetType="dockablz:Layout">
-        <Setter Property="FloatingItemsControlStyle" Value="{StaticResource FloatingDragablzItemsControlStyle}" />
-        <!--  Setter Property="FloatingItemContainerStyle" Value="{StaticResource FloatingDragablzItemStyle}" /  -->
-        <Setter Property="FloatingItemContainerStyleSelector">
-            <Setter.Value>
-                <dockablz:CouldBeHeaderedStyleSelector HeaderedStyle="{StaticResource ToolDragablzItemStyle}" NonHeaderedStyle="{StaticResource FloatingDragablzItemStyle}" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="dockablz:Layout">
@@ -2445,7 +2217,7 @@
                                 Content="{TemplateBinding ContentControl.Content}"
                                 ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
                                 ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" />
-                            <ContentPresenter x:Name="PART_FloatContentPresenter" Margin="{TemplateBinding FloatingItemsContainerMargin}" />
+
                             <dockablz:DropZone
                                 x:Name="PART_TopDropZone"
                                 HorizontalAlignment="Center"
@@ -2474,18 +2246,6 @@
                                 Location="Left"
                                 Visibility="{TemplateBinding IsParticipatingInDrag,
                                                              Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <dockablz:DropZone
-                                x:Name="PART_FloatDropZone"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Location="Floating">
-                                <dockablz:DropZone.Visibility>
-                                    <MultiBinding Converter="{StaticResource BooleanAndToVisibilityConverter}">
-                                        <Binding Path="IsParticipatingInDrag" RelativeSource="{RelativeSource TemplatedParent}" />
-                                        <Binding Path="IsFloatDropZoneEnabled" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    </MultiBinding>
-                                </dockablz:DropZone.Visibility>
-                            </dockablz:DropZone>
                         </Grid>
                     </Border>
                 </ControlTemplate>

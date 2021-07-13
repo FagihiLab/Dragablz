@@ -28,7 +28,6 @@ namespace Dragablz.Dockablz
                 for (var cell = 0; cell < cellCount; cell++)
                 {
                     var item = items.Dequeue();
-                    Layout.SetFloatingItemState(item, WindowState.Normal);
                     item.SetCurrentValue(DragablzItem.XProperty, x);
                     item.SetCurrentValue(DragablzItem.YProperty, y);
                     item.SetCurrentValue(FrameworkElement.WidthProperty, cellWidth);
@@ -51,7 +50,6 @@ namespace Dragablz.Dockablz
             var width = bounds.Width/items.Count;
             foreach (var dragablzItem in items)
             {
-                Layout.SetFloatingItemState(dragablzItem, WindowState.Normal);
                 dragablzItem.SetCurrentValue(DragablzItem.XProperty, x);
                 dragablzItem.SetCurrentValue(DragablzItem.YProperty, 0d);
                 x += width;
@@ -70,7 +68,6 @@ namespace Dragablz.Dockablz
             var height = bounds.Height / items.Count;
             foreach (var dragablzItem in items)
             {
-                Layout.SetFloatingItemState(dragablzItem, WindowState.Normal);
                 dragablzItem.SetCurrentValue(DragablzItem.YProperty, y);
                 dragablzItem.SetCurrentValue(DragablzItem.XProperty, 0d);
                 y += height;
