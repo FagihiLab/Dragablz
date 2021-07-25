@@ -1,6 +1,7 @@
 ﻿using Dragablz.Core;
 using Dragablz.Dockablz;
 using Dragablz.Referenceless;
+using Dragablz.Themes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,7 +64,6 @@ namespace Dragablz
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TabablzControl), new FrameworkPropertyMetadata(typeof(TabablzControl)));
             CommandManager.RegisterClassCommandBinding(typeof(FrameworkElement), new CommandBinding(CloseItemCommand, CloseItemClassHandler, CloseItemCanExecuteClassHandler));
-
         }
 
         /// <summary>
@@ -219,6 +219,8 @@ namespace Dragablz
             get { return (double)GetValue(AdjacentHeaderItemOffsetProperty); }
             set { SetValue(AdjacentHeaderItemOffsetProperty, value); }
         }
+
+
 
         public static readonly DependencyProperty HeaderItemsOrganiserProperty = DependencyProperty.Register(
             "HeaderItemsOrganiser", typeof(IItemsOrganiser), typeof(TabablzControl), new PropertyMetadata(new HorizontalOrganiser()));
@@ -905,7 +907,8 @@ namespace Dragablz
                 VisibleInstances.Remove(tabablzControl);
         }
 
-        public static bool isLoaded = false;
+        public static bool isBusy = false;
+        public static int LoadCounter = 0;
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             LoadedInstances.Add(this);
@@ -913,14 +916,6 @@ namespace Dragablz
             if (Window == null) return;
             Window.Closing += WindowOnClosing;
             _windowSubscription.Disposable = Disposable.Create(() => Window.Closing -= WindowOnClosing);
-
-            //For preset tabs location
-            if (_dragablzItemsControl is not null && !isLoaded)
-            {
-                Layout.OnLoadBranch(this, _dragablzItemsControl.DragablzItems());
-                isLoaded = true;
-            }
-
         }
 
         public bool isClosing = false;
@@ -954,15 +949,22 @@ namespace Dragablz
             if (target == null) return;
 
             target.IsHeaderOverTab = IsHeaderOverTab;
-            foreach (var item in orphanedItems)
+
+            foreach (var item in orphanedItems.Select(orphanedItem => _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(orphanedItem)))
             {
-                if (!await Layout.OnLoadBranch(this, item))
-                {
-                    var itemContent = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(item);
-                    RemoveFromSource(itemContent);
-                    target.AddToSource(itemContent);
-                }
+                RemoveFromSource(item);
+                target.AddToSource(item);
             }
+
+            //    foreach (var item in orphanedItems)
+            //{
+            //    if (!await Layout.OnLoadBranch(this, item, true))
+            //    {
+            //        var itemContent = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(item);
+            //        RemoveFromSource(itemContent);
+            //        target.AddToSource(itemContent);
+            //    }
+            //}
             isClosing = false;
         }
 
@@ -1127,17 +1129,20 @@ namespace Dragablz
 
             var mousePositionOnItem = Mouse.GetPosition(e.DragablzItem);
 
-            var floatingItemSnapShots = this.VisualTreeDepthFirstTraversal()
-                .OfType<Layout>()
-                .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
-                .ToList();
-
             e.DragablzItem.IsDropTargetFound = true;
             var item = RemoveItem(e.DragablzItem);
 
-            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, mousePositionOnItem, floatingItemSnapShots);
+            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, mousePositionOnItem);
             e.DragablzItem.IsDragging = false;
 
+            if (interTabTransfer.Item is DragableTabItem dragableTabItem)
+            {
+                if (dragableTabItem.TabControlName is not null)
+                {
+                    dragableTabItem.TabControlName = target.tc.Name;
+                }
+                dragableTabItem.Location = target.tc.GetOrderedHeaders().Select(x => x.Content as DragableTabItem).FirstOrDefault().Location;
+            }
             target.tc.ReceiveDrag(interTabTransfer);
             e.Cancel = true;
 
@@ -1165,9 +1170,18 @@ namespace Dragablz
             var window = Window.GetWindow(this);
             if (window != null
                 && InterTabController != null
-                && InterTabController.InterTabClient.TabEmptiedHandler(this, window) == TabEmptiedResponse.CloseWindowOrLayoutBranch && !isClosing)
+                && InterTabController.InterTabClient.TabEmptiedHandler(this, window) == TabEmptiedResponse.CloseWindowOrLayoutBranch)
             {
-                if (Layout.ConsolidateBranch(this)) return item;
+                var tabablzControl = this;
+
+                if (item is DragableTabItem dragableTabItem)
+                {
+                    tabablzControl = dragableTabItem.Parent as TabablzControl;
+                }
+                if (tabablzControl == null)
+                    tabablzControl = this;
+
+                if (Layout.ConsolidateBranch(tabablzControl)) return item;
 
                 try
                 {
@@ -1212,8 +1226,10 @@ namespace Dragablz
 
             if (InterTabController.InterTabClient == null)
                 throw new InvalidOperationException("An InterTabClient must be provided on an InterTabController.");
-
-            MonitorBreach(e);
+            if (!isClosing)
+            {
+                MonitorBreach(e);
+            }
         }
 
         private bool IsMyItem(DragablzItem item)
@@ -1221,7 +1237,7 @@ namespace Dragablz
             return _dragablzItemsControl != null && _dragablzItemsControl.DragablzItems().Contains(item);
         }
 
-        private async void MonitorBreach(DragablzDragDeltaEventArgs e)
+        private void MonitorBreach(DragablzDragDeltaEventArgs e)
         {
             var mousePositionOnHeaderItemsControl = Mouse.GetPosition(_dragablzItemsControl);
 
@@ -1235,8 +1251,7 @@ namespace Dragablz
 
             if (!breachOrientation.HasValue) return;
 
-            var newTabHost = await InterTabController.InterTabClient.GetNewHost(InterTabController.InterTabClient,
-                InterTabController.Partition, this);
+            var newTabHost =  InterTabController.InterTabClient.GetNewHost(InterTabController.InterTabClient, InterTabController.Partition, this);
             if (newTabHost?.TabablzControl == null || newTabHost.Container == null)
                 throw new ApplicationException("New tab host was not correctly provided");
 
@@ -1249,13 +1264,12 @@ namespace Dragablz
 
             var dragableItemHeaderPoint = e.DragablzItem.TranslatePoint(new Point(), _dragablzItemsControl);
             var dragableItemSize = new Size(e.DragablzItem.ActualWidth, e.DragablzItem.ActualHeight);
-            var floatingItemSnapShots = this.VisualTreeDepthFirstTraversal()
-                .OfType<Layout>()
-                .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
-                .ToList();
 
-            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, breachOrientation.Value, dragStartWindowOffset, e.DragablzItem.MouseAtDragStart, dragableItemHeaderPoint, dragableItemSize, floatingItemSnapShots, isTransposing);
-
+            var interTabTransfer = new InterTabTransfer(item, e.DragablzItem, breachOrientation.Value, dragStartWindowOffset, e.DragablzItem.MouseAtDragStart, dragableItemHeaderPoint, dragableItemSize, isTransposing);
+            if (interTabTransfer.Item is DragableTabItem dragableTabItem)
+            {
+                dragableTabItem.IsMainWindow = false;
+            }
             if (myWindow.WindowState == WindowState.Maximized)
             {
                 var desktopMousePosition = Native.GetCursorPos().ToWpf();
@@ -1297,7 +1311,6 @@ namespace Dragablz
             interTabTransfer.OriginatorContainer.IsDropTargetFound = true;
             e.Cancel = true;
         }
-
         private bool IsTransposing(TabControl target)
         {
             return IsVertical(this) != IsVertical(target);
@@ -1321,7 +1334,7 @@ namespace Dragablz
         private Point ConfigureNewHostSizeAndGetDragStartWindowOffset(Window currentWindow, INewTabHost<Window> newTabHost, DragablzItem dragablzItem, bool isTransposing)
         {
             var layout = this.VisualTreeAncestory().OfType<Layout>().FirstOrDefault();
-            Point dragStartWindowOffset;
+            Point dragStartWindowOffset;            
             if (layout != null)
             {
                 newTabHost.Container.Width = ActualWidth + Math.Max(0, currentWindow.RestoreBounds.Width - layout.ActualWidth);
@@ -1356,6 +1369,13 @@ namespace Dragablz
         internal void ReceiveDrag(InterTabTransfer interTabTransfer)
         {
             var myWindow = Window.GetWindow(this);
+            if (myWindow == Application.Current.MainWindow)
+            {
+                if (interTabTransfer.Item is DragableTabItem dragableTabItem)
+                {
+                    dragableTabItem.IsMainWindow = true;
+                }
+            }
             if (myWindow == null) throw new ApplicationException("Unable to find owning window.");
             myWindow.Activate();
 
@@ -1381,7 +1401,6 @@ namespace Dragablz
             AddToSource(interTabTransfer.Item);
             SelectedItem = interTabTransfer.Item;
 
-            Dispatcher.BeginInvoke(new Action(() => Layout.RestoreFloatingItemSnapShots(this, interTabTransfer.FloatingItemSnapShots)), DispatcherPriority.Loaded);
             _dragablzItemsControl.InstigateDrag(interTabTransfer.Item, newContainer =>
             {
                 newContainer.PartitionAtDragStart = interTabTransfer.OriginatorContainer.PartitionAtDragStart;
@@ -1430,7 +1449,6 @@ namespace Dragablz
                 newContainer.MouseAtDragStart = interTabTransfer.DragStartItemOffset;
             });
         }
-
         /// <summary>
         /// generate a ContentPresenter for the selected item
         /// </summary>
@@ -1452,12 +1470,10 @@ namespace Dragablz
                 child.IsEnabled = isSelected;
             }
         }
-
         private static object GetContent(object item)
         {
             return (item is TabItem) ? ((TabItem)item).Content : item;
         }
-
         /// <summary>
         /// create the child ContentPresenter for the given item (could be data or a TabItem)
         /// </summary>
@@ -1481,7 +1497,6 @@ namespace Dragablz
             };
             _itemsHolder.Children.Add(cp);
         }
-
         /// <summary>
         /// Find the CP for the given object.  data could be a TabItem or a piece of data
         /// </summary>
@@ -1496,13 +1511,11 @@ namespace Dragablz
                 ? null
                 : _itemsHolder?.Children.Cast<ContentPresenter>().FirstOrDefault(cp => cp.Content == data);
         }
-
         private void ItemContainerGeneratorOnStatusChanged(object sender, EventArgs eventArgs)
         {
             MarkWrappedTabItems();
             MarkInitialSelection();
         }
-
         private static void CloseItem(DragablzItem item, TabablzControl owner)
         {
             if (item == null)
@@ -1525,7 +1538,6 @@ namespace Dragablz
             if (!cancel)
                 owner.RemoveItem(item);
         }
-
         private static void CloseItemCanExecuteClassHandler(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = FindOwner(e.Parameter, e.OriginalSource) != null;
@@ -1538,7 +1550,6 @@ namespace Dragablz
 
             CloseItem(owner.Item1, owner.Item2);
         }
-
         private static Tuple<DragablzItem, TabablzControl> FindOwner(object eventParameter, object eventOriginalSource)
         {
             var dragablzItem = eventParameter as DragablzItem;
@@ -1562,7 +1573,6 @@ namespace Dragablz
 
             return tabablzControl == null ? null : new Tuple<DragablzItem, TabablzControl>(dragablzItem, tabablzControl);
         }
-
         private void AddItemHandler(object sender, ExecutedRoutedEventArgs e)
         {
             if (NewItemFactory == null)
@@ -1576,7 +1586,6 @@ namespace Dragablz
 
             Dispatcher.BeginInvoke(new Action(_dragablzItemsControl.InvalidateMeasure), DispatcherPriority.Loaded);
         }
-
         private void PrepareChildContainerForItemOverride(DependencyObject dependencyObject, object o)
         {
             var dragablzItem = dependencyObject as DragablzItem;
@@ -1589,5 +1598,17 @@ namespace Dragablz
 
             SetIsWrappingTabItem(dependencyObject, o is TabItem);
         }
+
+        public Window GetWindow(DragablzItem dragablzItem)
+        {
+            var newTabHost = InterTabController.InterTabClient.CreateNewHost(InterTabController.InterTabClient, InterTabController.Partition, this);
+            if (newTabHost?.TabablzControl == null || newTabHost.Container == null)
+                throw new ApplicationException("New tab host was not correctly provided");
+
+            var item = _dragablzItemsControl.ItemContainerGenerator.ItemFromContainer(dragablzItem);
+            return newTabHost.Container;
+        }
+
     }
+
 }

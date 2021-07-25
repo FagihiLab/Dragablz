@@ -13,7 +13,7 @@ namespace Dragablz
         /// <param name="partition">Provides the partition where the drag operation was initiated.</param>
         /// <param name="source">The source control where a dragging operation was initiated.</param>
         /// <returns></returns>
-        INewTabHost<UIElement> GetNewHost(object partition, TabablzControl source);
+        INewTabHost<UIElement> GetNewHost(string partition, TabablzControl source);
         
     }
 }

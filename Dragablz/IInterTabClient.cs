@@ -1,3 +1,5 @@
+using Dragablz.Dockablz;
+using Dragablz.Themes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +18,8 @@ namespace Dragablz
         /// <param name="partition">Provides the partition where the drag operation was initiated.</param>
         /// <param name="source">The source control where a dragging operation was initiated.</param>
         /// <returns></returns>
-        Task<INewTabHost<Window>> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source);
+        INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source);
+        INewTabHost<Window> CreateNewHost(IInterTabClient interTabClient, object partition, TabablzControl tabablzControl);
         /// <summary>
         /// Called when a tab has been emptied, and thus typically a window needs closing.
         /// </summary>

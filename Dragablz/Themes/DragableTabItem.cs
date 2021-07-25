@@ -18,8 +18,72 @@ namespace Dragablz.Themes
 
         // Using a DependencyProperty as the backing store for Location.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LocationProperty =
-            DependencyProperty.Register("Location", typeof(DropZoneLocation), typeof(TabItem), new PropertyMetadata(DropZoneLocation.Left));
-    
-    
+            DependencyProperty.Register("Location", typeof(DropZoneLocation), typeof(DragableTabItem), new PropertyMetadata(DropZoneLocation.Unset));
+
+        public string LayoutName
+        {
+            get { return (string)GetValue(LayoutNameProperty); }
+            set { SetValue(LayoutNameProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for LayoutName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LayoutNameProperty =
+            DependencyProperty.Register("LayoutName", typeof(string), typeof(DragableTabItem), new PropertyMetadata(""));
+
+
+
+        public string TabControlName
+        {
+            get
+            {
+                if (Parent is TabablzControl tabablzControl && GetValue(TabControlNameProperty) == "")
+                    return tabablzControl.Name;
+
+                return (string)GetValue(TabControlNameProperty);
+            }
+            set { SetValue(TabControlNameProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TabControlName.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TabControlNameProperty =
+            DependencyProperty.Register("TabControlName", typeof(string), typeof(DragableTabItem), new PropertyMetadata(""));
+
+        public bool IsMainWindow
+        {
+            get { return (bool)GetValue(IsMainWindowProperty); }
+            set { SetValue(IsMainWindowProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsMainWindow.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsMainWindowProperty =
+            DependencyProperty.Register("IsMainWindow", typeof(bool), typeof(DragableTabItem), new PropertyMetadata(true));
+
+        public State CurrentState
+        {
+            get => new DragableTabItem.State
+            {
+                LayoutName = LayoutName,
+                Location = Location,
+                IsMainWindow = IsMainWindow,
+                TabControlName = TabControlName,
+                HeaderName = Header
+            };
+            set
+            {
+                LayoutName = value.LayoutName;
+                Location = value.Location;
+                IsMainWindow = value.IsMainWindow;
+                TabControlName = value.TabControlName;
+                Header = value.HeaderName;
+            }
+        }
+        public class State
+        {
+            public string LayoutName { get; set; }
+            public DropZoneLocation Location { get; set; }
+            public bool IsMainWindow { get; set; }
+            public string TabControlName { get; set; }
+            public object HeaderName { get; set; }
+        }
     }
 }

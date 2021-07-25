@@ -13,18 +13,15 @@ namespace Dragablz
     /// </summary>
     public class DefaultInterLayoutClient : IInterLayoutClient
     {
-        public INewTabHost<UIElement> GetNewHost(object partition, TabablzControl source)
+        public INewTabHost<UIElement> GetNewHost(string partition, TabablzControl source)
         {
             var tabablzControl = new TabablzControl {DataContext = source.DataContext};
 
             Clone(source, tabablzControl);
 
-            if (source.InterTabController == null)
-                throw new InvalidOperationException("Source tab does not have an InterTabCOntroller set.  Ensure this is set on initial, and subsequently generated tab controls.");
-
             var newInterTabController = new InterTabController
             {
-                Partition = source.InterTabController.Partition
+                Partition = source.InterTabController.Partition,
             };
             Clone(source.InterTabController, newInterTabController);
             tabablzControl.SetCurrentValue(TabablzControl.InterTabControllerProperty, newInterTabController);            

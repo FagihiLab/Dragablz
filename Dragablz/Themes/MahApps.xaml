@@ -292,7 +292,6 @@
                                                />
                                         <DockPanel Margin="{TemplateBinding Control.Padding }">
                                             <Button DockPanel.Dock="Right"
-                                                    Command="{x:Static dockablz:Layout.CloseFloatingItem}"
                                                     CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                     Margin="1 0 0 0"
                                                     Style="{DynamicResource MahAppsToolWindowButtonStyle}"
@@ -304,7 +303,6 @@
                                                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                                             </Button>
                                             <Button DockPanel.Dock="Right"
-                                                    Command="{x:Static dockablz:Layout.UnfloatItemCommand}"
                                                     CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                     Margin="1 0 0 0"
                                                     Style="{DynamicResource MahAppsToolWindowButtonStyle}"
@@ -312,7 +310,6 @@
                                                 <Path Width="12" Height="12" Stretch="UniformToFill" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Data="M 19 19 H 5 V 5 h 7 V 3 H 5 C 3.89 3 3 3.9 3 5 v 14 c 0 1.1 0.89 2 2 2 h 14 c 1.1 0 2 -0.9 2 -2 v -7 h -2 v 7 z M 14 3 v 2 h 3.59 L 7.76 14.83 9.17 16.24 19 6.41 V 10 h 2 V 3 h -7 z" />
                                             </Button>
                                             <Button DockPanel.Dock="Right"
-                                                    Command="{x:Static dockablz:Layout.MaximiseFloatingItem}"
                                                     CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                     Margin="1 0 0 0"
                                                     Style="{DynamicResource MahAppsToolWindowButtonStyle}"
@@ -324,7 +321,6 @@
                                                       Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                                             </Button>
                                             <Button DockPanel.Dock="Right"
-                                                    Command="{x:Static dockablz:Layout.RestoreFloatingItem}"
                                                     CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                                     Margin="1 0 0 0"
                                                     Style="{DynamicResource MahAppsToolWindowButtonStyle}"
@@ -350,7 +346,6 @@
                             </Border>
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Left}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="Left"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Stretch"
@@ -358,7 +353,6 @@
                                    />
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Top}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="Top"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Top"
@@ -366,7 +360,6 @@
                                    />
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="Right"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Stretch"
@@ -374,7 +367,6 @@
                                    />
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="Bottom"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Bottom"
@@ -383,7 +375,6 @@
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="TopLeft"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
@@ -392,7 +383,6 @@
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="TopRight"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
@@ -401,7 +391,6 @@
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="BottomRight"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Bottom"
@@ -410,7 +399,6 @@
                             <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Right}"
                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Bottom}"
-                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
                                    dragablz:DragablzItem.SizeGrip="BottomLeft"                                   
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Bottom"
@@ -421,15 +409,6 @@
                 </Setter.Value>
             </Setter>
         </Style.Setters>
-        <Style.Triggers>
-            <Trigger Property="dockablz:Layout.FloatingItemState" Value="Maximized">
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Canvas.Left" Value="0" />
-                <Setter Property="Canvas.Top" Value="0" />
-                <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualWidth}" />
-                <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualHeight}" />
-            </Trigger>
-        </Style.Triggers>
     </Style>    
 
     <Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="MahAppsTabablzControlStyle">
